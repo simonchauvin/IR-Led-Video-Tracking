@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+# CodeBlocks
+
+*.depend
+*.layout
