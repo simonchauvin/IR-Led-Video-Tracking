@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 
@@ -52,7 +49,7 @@ public:
 
     // osc
     ofxOscSender sender;
-    ofstream position;
-
+    ofBuffer* buff;
+    int frameCount;
 
 };

@@ -23,9 +23,8 @@ void testApp::setup(){
 
     // open an outgoing connection to HOST:PORT
 	//sender.setup(HOST, PORT);
-	position.open ("position.txt");
-    //position.close();
-
+	buff = new ofBuffer();
+	frameCount = 1;
 }
 
 //--------------------------------------------------------------
@@ -89,15 +88,16 @@ void testApp::draw(){
 
 	// or, instead we can draw each blob individually from the blobs vector,
 	// this is how to get access to them:
-    for (int i = 0; i < contourFinder.nBlobs; i++){
-        contourFinder.blobs[i].draw(360,540);
+    //for (int i = 0; i < contourFinder.nBlobs; i++){
+    if (contourFinder.nBlobs > 0) {
+        contourFinder.blobs[0].draw(360,540);
 
 		// draw over the centroid if the blob is a hole
 		ofSetColor(255);
-		if(contourFinder.blobs[i].hole){
+		if(contourFinder.blobs[0].hole){
 			ofDrawBitmapString("hole",
-                               contourFinder.blobs[i].boundingRect.getCenter().x + 360,
-                               contourFinder.blobs[i].boundingRect.getCenter().y + 540);
+                               contourFinder.blobs[0].boundingRect.getCenter().x + 360,
+                               contourFinder.blobs[0].boundingRect.getCenter().y + 540);
 		}
 
         /*ofxOscMessage m;
@@ -106,12 +106,19 @@ void testApp::draw(){
         m.addIntArg(contourFinder.blobs[i].boundingRect.getCenter().x);
         m.addIntArg(contourFinder.blobs[i].boundingRect.getCenter().y);
         sender.sendMessage(m);*/
-        position << i;
-        position << ":";
-        position << contourFinder.blobs[i].boundingRect.getCenter().x;
-        position << "&";
-        position << contourFinder.blobs[i].boundingRect.getCenter().y;
-        position << "\n";
+        ofBuffer content = ofBufferFromFile("position.txt");
+        std::ostringstream ss;
+        ss << contourFinder.blobs[0].boundingRect.getCenter().x;
+        ss << "&";
+        ss << contourFinder.blobs[0].boundingRect.getCenter().y;
+        ss << ";";
+        frameCount++;
+        if (frameCount > 5) {
+            buff->clear();
+            frameCount = 1;
+        }
+        buff->append(std::string(ss.str()));
+        ofBufferToFile("position.txt", *buff);
     }
 
 	// finally, a report:
