@@ -2,10 +2,9 @@
 
 #include "ofMain.h"
 #include "ofxOpenCv.h"
+#include "ofxUDPManager.h"
 
-#include "ofxOsc.h"
-
-#define HOST "localhost"
+#define HOST "127.0.0.1"
 #define PORT 12345
 
 #define _USE_LIVE_VIDEO
@@ -16,6 +15,7 @@ public:
     void setup();
     void update();
     void draw();
+	void exit();
 
     void keyPressed(int key);
     void keyReleased(int key);
@@ -45,11 +45,7 @@ public:
     int 				threshold;
     bool				bLearnBakground;
 
-    //
-
-    // osc
-    ofxOscSender sender;
-    ofBuffer* buff;
-    int frameCount;
+    //UDP Connection
+	ofxUDPManager udpConnection;
 
 };

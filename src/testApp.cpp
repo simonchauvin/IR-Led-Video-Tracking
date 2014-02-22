@@ -19,12 +19,11 @@ void testApp::setup(){
 	bLearnBakground = true;
 	threshold = 80;
 
-    // osc
-
-    // open an outgoing connection to HOST:PORT
-	//sender.setup(HOST, PORT);
-	buff = new ofBuffer();
-	frameCount = 1;
+	//create the socket and set to send to host:port
+    udpConnection.Create();
+    udpConnection.Connect(HOST,PORT);
+    udpConnection.SetNonBlocking(true);
+	printf("Open UDP connection");
 }
 
 //--------------------------------------------------------------
@@ -99,26 +98,15 @@ void testApp::draw(){
                                contourFinder.blobs[0].boundingRect.getCenter().x + 360,
                                contourFinder.blobs[0].boundingRect.getCenter().y + 540);
 		}
-
-        /*ofxOscMessage m;
-        m.setAddress("/blob/position");
-        m.addIntArg(i);
-        m.addIntArg(contourFinder.blobs[i].boundingRect.getCenter().x);
-        m.addIntArg(contourFinder.blobs[i].boundingRect.getCenter().y);
-        sender.sendMessage(m);*/
-        ofBuffer content = ofBufferFromFile("position.txt");
-        std::ostringstream ss;
+		//Retrieve data into a stringstream
+		std::ostringstream ss;
         ss << contourFinder.blobs[0].boundingRect.getCenter().x;
         ss << "&";
         ss << contourFinder.blobs[0].boundingRect.getCenter().y;
         ss << ";";
-        frameCount++;
-        if (frameCount > 5) {
-            buff->clear();
-            frameCount = 1;
-        }
-        buff->append(std::string(ss.str()));
-        ofBufferToFile("position.txt", *buff);
+		//Send data to the server
+		string message = ss.str();
+		udpConnection.Send(message.c_str(), message.length());
     }
 
 	// finally, a report:
@@ -147,6 +135,11 @@ void testApp::keyPressed(int key){
 			if (threshold < 0) threshold = 0;
 			break;
 	}
+}
+
+void testApp::exit() {
+	printf("Close UDP connection");
+	udpConnection.Close();
 }
 
 //--------------------------------------------------------------

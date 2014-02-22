@@ -1,2 +1,0 @@
-IR-Led-Video-Detection
-======================
