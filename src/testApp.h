@@ -3,11 +3,10 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxUDPManager.h"
+#include "PGRCamera.h"
 
 #define HOST "127.0.0.1"
 #define PORT 12345
-
-#define _USE_LIVE_VIDEO
 
 class testApp : public ofBaseApp{
 
@@ -27,14 +26,13 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
+	//PGR CAMERA
+	PGRCamera mPgrCam;
 
-#ifdef _USE_LIVE_VIDEO
     ofVideoGrabber 		vidGrabber;
-#else
-    ofVideoPlayer 		vidPlayer;
-#endif
 
     ofxCvColorImage			colorImg;
+	ofImage	                imageTest;
 
     ofxCvGrayscaleImage 	grayImage;
     ofxCvGrayscaleImage 	grayBg;
@@ -45,7 +43,6 @@ public:
     int 				threshold;
     bool				bLearnBakground;
 
-    //UDP Connection
+    //UDP connection to the localhost
 	ofxUDPManager udpConnection;
-
 };
